@@ -1,0 +1,143 @@
+install.packages("data.table")
+install.packages("PropCIs")
+install.packages(GenomicAlignments)
+#install.packages(RAPIDR)
+#source("https://bioconductor.org/biocLite.R")
+#biocLite("GenomicAlignments")
+
+
+install.packages("http://cran.fhcrc.org/src/contrib/RAPIDR_0.1.1.tar.gz", repos=NULL)
+library(RAPIDR)
+load("y:/IonProton/RAPIDR_reference/205N_GC.RData")
+load("y:/IonProton/RAPIDR_reference/funtions.RData")
+
+
+#outcomes
+#ref.set
+#print(outcomes)
+outcome<-print(outcomes)
+outcome["NO"] <- NA # That creates the new column named "NO" filled with "NA"
+outcome$NO <- 1:nrow(outcome)
+#write.csv(outcome, file ="D:/RAPIDR/outcome.csv")
+
+ref<-print(ref.set)
+ref$TP <- c("tp", "tn", "fp","fn","Sensitivity","Specificity")
+ref["NO"] <- NA # That creates the new column named "NO" filled with "NA"
+ref$NO <- 1:nrow(ref)
+#write.csv(ref, file ="D:/RAPIDR/ref.csv")
+
+total <- merge(outcome,ref,by="NO",all=TRUE)
+
+write.csv(total, file ="D:/RAPIDR/totaloutcome.csv")
+#cat(ref.set,file="ref.set.txt",sep="\t",append=TRUE)
+#write.table(ref.set, file="ref.txt", sep="\t",append=F)
+# direct output to a file 
+#sink("ref.set", append=FALSE, split=FALSE)
+
+# return output to the terminal 
+#sink()
+# output directed to output.txt in c:\projects directory.
+# output overwrites existing file. no output to terminal. 
+#sink("D:/RAPIDR/ref.txt")
+
+# output directed to myfile.txt in cwd. output is appended
+# to existing file. output also send to terminal. 
+#sink("ref.txt", append=TRUE, split=TRUE)
+
+rdata <-read.csv("D:/RAPIDR/RAPIDR.csv", header=T, sep=",")
+
+
+head(rdata)
+#x = read.table("RAPIDR.csv", col.names = c("ref.set"),sep="")
+apply(rdata, 1)
+
+ 
+#source("https://bioconductor.org/biocLite.R")
+#biocLite("BSgenome.Hsapiens.UCSC.hg19")
+
+# makeBinnedCountsFile(bam.file.list=c(
+ #  'IonXpress_045_R_2015_09_18_14_15_15_user_PRO-91-20150918_NIPT_Auto_user_PRO-91-20150918_NIPT_111.bam', 'IonXpress_046_R_2015_09_18_14_15_15_user_PRO-91-20150918_NIPT_Auto_user_PRO-91-20150918_NIPT_111.bam'
+ #),sampleIDs=c(
+  # "152966", "153000", "153008", "153019", "153020", "153021", "153023"),binned.counts.fname="20150918_7P",k=20000)
+
+ #biocLite("BSgenome")
+#biocLite("BSgenome.Hsapiens.UCSC.hg19")
+
+install.packages("BSgenome.Hsapiens.UCSC.hg19")
+library(BSgenome.Hsapiens.UCSC.hg19)
+
+#for(i in c(1:length(rdata$bam)))
+ # {
+  #print(rdata$bam[i])
+  
+#}
+
+x<-rdata$bam
+
+toString(x)                #deal with data    
+y<-toString(x)
+y1<- gsub('\"', '', y)
+y2<- gsub(",",'',y1)      
+y3<-strsplit(y2, " ")[[1]] #make string into vector
+
+makeBinnedCountsFile(bam.file.list=y3,sampleIDs=rdata$SampleID,binned.counts.fname=rdata$binname,k=20000)
+
+test.results<-testUnknowns(ref.set,unknowns.counts.file=rdata$binname,gcContentFile="/clc/IonProton/2014_08_20/bam/test_R/gcContent.RData")
+print(test.results)
+
+writeResultsToFile_CGM(test.results,"20151029_testResults_Bad136N_withoutGC&PCA.txt")
+
+png(filename="153468_Bad136N_withoutGC&PCA.png",width=800, height=446, res=120)
+plotTestSample(test.results,"153468")
+dev.off()
+
+png(filename="153505_Bad136N_withoutGC&PCA.png",width=800, height=446, res=120)
+plotTestSample(test.results,"153505")
+dev.off()
+
+#D<-paste0("\n",y, "\n")
+
+#d<-cat(gsub(",", "','", y))
+#D<-paste0("'",d, "'")
+
+z<-sapply(strsplit(y, '[, ]+'), function(x) toString(sQuote(x)))
+
+result <- gsub("‘", "'", z)
+result1<- gsub("’", "'", result)
+result2<- gsub('\"', '', result1)
+result3<- c(gsub('"', '', result2))
+result3
+result4<-c(cat(result3, "\n"))
+strsplit(y, " ")[[1]]
+
+
+result3#cat(gsub("(\\w+)", '"\\1"', y))
+#cat(gsub("\\", ',"', y, perl=T))
+makeBinnedCountsFile(bam.file.list=result4,sampleIDs=rdata$SampleID,binned.counts.fname=rdata$binname,k=20000)
+
+
+
+
+
+
+# makeBinnedCountsFile(bam.file.list=c(rdata$bam),sampleIDs=c(rdata$SampleID),binned.counts.fname="20150918_7P",k=20000)
+#Binning counts in bam files
+#Error in validObject(.Object) : 
+#  invalid class “BamFileList” object: the 'listData' slot must be a list containing BamFile objects
+
+
+test.results<-testUnknowns(ref.set,unknowns.counts.file="20150918_7P",gcContentFile="/clc/IonProton/2014_08_20/bam/test_R/gcContent.RData")
+print(test.results)
+# 
+# source("http://bioconductor.org/biocLite.R")
+# biocLite()
+# biocLite(c("package1","package2"))
+# library(BiocInstaller) 
+# biocVersion() # what Bioc version is on your machine?
+# biocValid() # are packages up to date?
+# 
+# installed.genomes()
+# source("http://bioconductor.org/biocLite.R")
+# biocLite("BSgenome.Athaliana.TAIR.TAIR9")
+
+
