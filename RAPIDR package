@@ -28,7 +28,11 @@ ref$NO <- 1:nrow(ref)
 
 total <- merge(outcome,ref,by="NO",all=TRUE)
 
+#Save total(ref.set,outcomes) data into csv file 
 write.csv(total, file ="D:/RAPIDR/totaloutcome.csv")
+
+
+
 #cat(ref.set,file="ref.set.txt",sep="\t",append=TRUE)
 #write.table(ref.set, file="ref.txt", sep="\t",append=F)
 # direct output to a file 
@@ -49,7 +53,7 @@ rdata <-read.csv("D:/RAPIDR/RAPIDR.csv", header=T, sep=",")
 
 head(rdata)
 #x = read.table("RAPIDR.csv", col.names = c("ref.set"),sep="")
-apply(rdata, 1)
+#apply(rdata, 1)
 
  
 #source("https://bioconductor.org/biocLite.R")
@@ -63,8 +67,8 @@ apply(rdata, 1)
  #biocLite("BSgenome")
 #biocLite("BSgenome.Hsapiens.UCSC.hg19")
 
-install.packages("BSgenome.Hsapiens.UCSC.hg19")
-library(BSgenome.Hsapiens.UCSC.hg19)
+#install.packages("BSgenome.Hsapiens.UCSC.hg19")
+#library(BSgenome.Hsapiens.UCSC.hg19)
 
 #for(i in c(1:length(rdata$bam)))
  # {
@@ -72,48 +76,244 @@ library(BSgenome.Hsapiens.UCSC.hg19)
   
 #}
 
-x<-rdata$bam
+bam<-rdata$bam
+#x<-rdata$bam
+#toString(x)                #deal with data  bam.file.list  
+#y<-toString(x)
+#y1<- gsub('\"', '', y)
+#y2<- gsub(",",'',y1)      
+#y3<-strsplit(y2, " ")[[1]] #make string into vector
+bam.ch<-dput(as.character(bam))
+#bam.ch<-paste(as.character(bam), collapse=", ")
+#bam.chr<-cat(paste0('"', paste(bam.ch, collapse="\", \""), '"'))
+#bam.chr <- paste0('"', paste(bam.ch, collapse="\", \""), '"')
+#bam.v<-strsplit(bam.chr," ")[[1]]
+#bam.v1<-paste(shQuote(bam.ch, type="cmd"), collapse=", ")
 
-toString(x)                #deal with data    
-y<-toString(x)
-y1<- gsub('\"', '', y)
-y2<- gsub(",",'',y1)      
-y3<-strsplit(y2, " ")[[1]] #make string into vector
+bin <-rdata$binname
+#X <- vector(mode="character")
+#X[1]<-rdata$binname[[1]]
+#X[2]<-rdata$binname[[2]]
 
-makeBinnedCountsFile(bam.file.list=y3,sampleIDs=rdata$SampleID,binned.counts.fname=rdata$binname,k=20000)
+bin.ch<-dput(as.character(bin))
+#bin.chr<-paste0('"', paste(bin.ch, collapse="\", \""), '"')
+#bin.v<-strsplit(bin.chr," ")[[1]]
 
-test.results<-testUnknowns(ref.set,unknowns.counts.file=rdata$binname,gcContentFile="/clc/IonProton/2014_08_20/bam/test_R/gcContent.RData")
+
+ref.set<-rdata$ref.set
+ref.set.ch<-dput(as.character(ref.set))
+#ref.set.chr<-paste0('"', paste(ref.set.ch, collapse="\", \""), '"')
+#ref.set.v<-strsplit(ref.set.chr," ")[[1]]
+
+ref<-rdata$ref
+ref.ch<-dput(as.character(ref))
+#ref.chr<-paste0('"', paste(ref.ch, collapse="\", \""), '"')
+#ref.v<-strsplit(ref.chr," ")[[1]]
+
+
+
+si<-rdata$SampleID
+si.ch<-dput(as.character(si))
+#si.chr<-paste0('"', paste(si.ch, collapse="\", \""), '"')
+#si.v<-strsplit(si.chr," ")[[1]]
+
+analyzed<-rdata$analyzed.kind
+analyzed.ch<-dput(as.character(analyzed))
+#analyzed.chr<-paste0('"', paste(analyzed.ch, collapse="\", \""), '"')
+
+
+while(i <= 3){
+  combinename=c(si.ch[i],ref.ch[i],analyzed.ch[i])
+  
+  cb<-paste(combinename, collapse="_")
+
+}
+
+
+
+for(i in 1:3){
+combinename=c(si.ch[i],ref.ch[i],analyzed.ch[i])
+
+cb<-paste(combinename, collapse="_")
+
+var_filename = as.name(cb)
+
+}
+
+combinename=c(si.ch[2],ref.ch[2],analyzed.ch[2])
+
+x6<-paste(combinename, collapse="_")
+var_filename = as.name(x6)
+
+
+#head(x7)
+#toString(x1)                #deal with data  bam.file.list  
+#x2<-toString(x1)
+#x3<- gsub('\"', '', x2)
+
+
+#x4<- gsub(",",'',x3)
+#x4
+#x6<-strsplit(x4, " ")[[1]] #make string into vector
+
+
+#if(is.null(y3))     return(NULL) 
+
+#dflist <- c("dataframe1", "dataframe2", "dataframe3", "dataframe4")
+
+#for (i in dflist) {
+ # plot(i$var1, i$var2)
+#}
+
+
+
+for(i in c(1:length(bam.ch))){
+
+makeBinnedCountsFile(bam.file.list=bam.ch[i],sampleIDs=si.ch[i],binned.counts.fname=bin.ch[i],k=20000)
+
+}
+
+#makeBinnedCountsFile(bam.file.list=y3,sampleIDs=rdata$SampleID,binned.counts.fname=bin.ch,k=20000)
+
+#x3<-rdata$SampleID
+#x4<-as.character(x3)
+
+
+
+
+
+##
+load("y:/IonProton/RAPIDR_reference/205N_GC.RData")
+load("y:/IonProton/RAPIDR_reference/funtions.RData")
+gg<-c("205N_withoutGC&PCA.RData","214N_withoutGC&PCA.RData","205N_withoutGC&PCA.RData")
+
+for(i in c(1:length(bin.ch))){
+test.results<-testUnknowns(ref.set,unknowns.counts.file=bin.ch[i],gcContentFile="y:/IonProton/2014_08_20/bam/test_R/gcContent.RData")
 print(test.results)
 
 writeResultsToFile_CGM(test.results,"20151029_testResults_Bad136N_withoutGC&PCA.txt")
 
-png(filename="153468_Bad136N_withoutGC&PCA.png",width=800, height=446, res=120)
-plotTestSample(test.results,"153468")
+png(paste(var_filename, "png", sep="."),width=800, height=446, res=120)
+
+plotTestSample(test.results,si.ch[i])
 dev.off()
 
-png(filename="153505_Bad136N_withoutGC&PCA.png",width=800, height=446, res=120)
-plotTestSample(test.results,"153505")
+}
+
+
+
+##Print test.results into txt file
+# Title
+cat("Tests Output", file = "tests.txt")
+# add 2 newlines
+#cat("\n\n", file = "tests.txt", append = TRUE)
+# export anova test output
+#cat("Anova Test\n", file = "tests.txt", append = TRUE)
+#capture.output(anova_test, file = "tests.txt", append = TRUE)
+# add 2 newlines
+#cat("\n\n", file = "tests.txt", append = TRUE)
+# export t-test output
+#cat("T-Test\n", file = "tests.txt", append = TRUE)
+capture.output(test.results, file = "test_results.txt", append = TRUE)
+
+
+writeResultsToFile_CGM(test.results,"20151029_testResults_Bad136N_withoutGC&PCA.txt")
+
+#png(filename="var_filename.png",width=800, height=446, res=120)
+
+png(paste(var_filename, "png", sep="."),width=800, height=446, res=120)
+
+
+#jpeg(paste(var_filename, "jpg", sep="."))
+
+#Fn<-rdata$sampleid+_+rdata$ref+_+rdata$analyzed.kind+.png
+plotTestSample(test.results,si.ch)
 dev.off()
+
+
+
+#png(filename="153505_Bad136N_withoutGC&PCA.png",width=800, height=446, res=120)
+#plotTestSample(test.results,"153505")
+#dev.off()
+
+file.copy("Rplots.pdf","Rplots_152966_vs_Good82N_GC_defaultScale.pdf")
+plotTestSample_CGM(test.results,"152966","Good82N_GC")
+dev.off()
+file.copy("Rplots.pdf","Rplots_152966_vs_Good82N_GC_scale15.pdf")
+get_zscore(test.results,"152966","Good82N_GC")
+
+#plotTestSample(test.results,"153000")
+plotTestSample(test.results,si.ch)
+dev.off()
+file.copy("Rplots.pdf","Rplots_153000_vs_Good82N_GC_defaultScale.pdf")
+#plotTestSample_CGM(test.results,"153000","Good82N_GC")
+plotTestSample_CGM(test.results,)
+dev.off()
+file.copy("Rplots.pdf","Rplots_153000_vs_Good82N_GC_scale15.pdf")
+get_zscore(test.results,"153000","Good82N_GC")
+
+plotTestSample(test.results,"153008")
+dev.off()
+file.copy("Rplots.pdf","Rplots_153008_vs_Good82N_GC_defaultScale.pdf")
+plotTestSample_CGM(test.results,"153008","Good82N_GC")
+dev.off()
+file.copy("Rplots.pdf","Rplots_153008_vs_Good82N_GC_scale15.pdf")
+get_zscore(test.results,"153008","Good82N_GC")
+
+plotTestSample(test.results,"153019")
+dev.off()
+file.copy("Rplots.pdf","Rplots_153019_vs_Good82N_GC_defaultScale.pdf")
+plotTestSample_CGM(test.results,"153019","Good82N_GC")
+dev.off()
+file.copy("Rplots.pdf","Rplots_153019_vs_Good82N_GC_scale15.pdf")
+get_zscore(test.results,"153019","Good82N_GC")
+
+plotTestSample(test.results,"153020")
+dev.off()
+file.copy("Rplots.pdf","Rplots_153020_vs_Good82N_GC_defaultScale.pdf")
+plotTestSample_CGM(test.results,"153020","Good82N_GC")
+dev.off()
+file.copy("Rplots.pdf","Rplots_153020_vs_Good82N_GC_scale15.pdf")
+get_zscore(test.results,"153020","Good82N_GC")
+
+plotTestSample(test.results,"153021")
+dev.off()
+file.copy("Rplots.pdf","Rplots_153021_vs_Good82N_GC_defaultScale.pdf")
+plotTestSample_CGM(test.results,"153021","Good82N_GC")
+dev.off()
+file.copy("Rplots.pdf","Rplots_153021_vs_Good82N_GC_scale15.pdf")
+get_zscore(test.results,"153021","Good82N_GC")
+
+plotTestSample(test.results,"153023")
+dev.off()
+file.copy("Rplots.pdf","Rplots_153023_vs_Good82N_GC_defaultScale.pdf")
+plotTestSample_CGM(test.results,"153023","Good82N_GC")
+dev.off()
+file.copy("Rplots.pdf","Rplots_153023_vs_Good82N_GC_scale15.pdf")
+get_zscore(test.results,"153023","Good82N_GC")
+
+
+
 
 #D<-paste0("\n",y, "\n")
 
 #d<-cat(gsub(",", "','", y))
 #D<-paste0("'",d, "'")
 
-z<-sapply(strsplit(y, '[, ]+'), function(x) toString(sQuote(x)))
+#z<-sapply(strsplit(y, '[, ]+'), function(x) toString(sQuote(x)))
 
-result <- gsub("‘", "'", z)
-result1<- gsub("’", "'", result)
-result2<- gsub('\"', '', result1)
-result3<- c(gsub('"', '', result2))
-result3
-result4<-c(cat(result3, "\n"))
-strsplit(y, " ")[[1]]
+#result <- gsub("‘", "'", z)
+#result1<- gsub("’", "'", result)
+#result2<- gsub('\"', '', result1)
+#result3<- c(gsub('"', '', result2))
+#result3
+#result4<-c(cat(result3, "\n"))
+#strsplit(y, " ")[[1]]
 
 
-result3#cat(gsub("(\\w+)", '"\\1"', y))
+#result3#cat(gsub("(\\w+)", '"\\1"', y))
 #cat(gsub("\\", ',"', y, perl=T))
-makeBinnedCountsFile(bam.file.list=result4,sampleIDs=rdata$SampleID,binned.counts.fname=rdata$binname,k=20000)
+#makeBinnedCountsFile(bam.file.list=result4,sampleIDs=rdata$SampleID,binned.counts.fname=rdata$binname,k=20000)
 
 
 
